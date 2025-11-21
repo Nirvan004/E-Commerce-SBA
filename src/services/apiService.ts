@@ -1,0 +1,82 @@
+import { Product } from '../models/Product';
+
+const BASE_URL = 'https://dummyjson.com/products';
+
+export class ApiService {
+    static async getAllProducts(limit = 10, skip = 0): Promise<Product[]> {
+        try {
+            const response = await fetch(`${BASE_URL}?limit=${limit}&skip=${skip}`);
+            
+            if (!response.ok) {
+                throw new Error(`Failed to fetch products: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+
+            return data.products.map((p: any) => new Product(
+                p.id,
+                p.title,
+                p.description,
+                p.category,
+                p.price,
+                p.discountPercentage,
+                p.rating
+            ));
+
+        } catch (error: any) {
+            console.error('Error fetching products:', error.message);
+            throw error;
+        }
+    }
+
+    static async getProductById(id: number): Promise<Product> {
+        try {
+            const response = await fetch(`${BASE_URL}/${id}`);
+            
+            if (!response.ok) {
+                throw new Error(`Product with ID ${id} not found`);
+            }
+
+            const p = await response.json();
+
+            return new Product(
+                p.id,
+                p.title,
+                p.description,
+                p.category,
+                p.price,
+                p.discountPercentage,
+                p.rating
+            );
+
+        } catch (error: any) {
+            console.error(`Error fetching product ID ${id}:`, error.message);
+            throw error;
+        }
+    }
+
+    static async searchProducts(query: string): Promise<Product[]> {
+        try {
+            const response = await fetch(`${BASE_URL}/search?q=${encodeURIComponent(query)}`);
+
+            if (!response.ok) {
+                throw new Error(`Search failed for query: "${query}"`);
+            }
+
+            const data = await response.json();
+
+            return data.products.map((p: any) => new Product(
+                p.id,
+                p.title,
+                p.description,
+                p.category,
+                p.price,
+                p.discountPercentage,
+                p.rating
+            ));
+        } catch (error: any) {
+            console.error(`Error searching products:`, error.message);
+            throw error;
+        }
+    }
+}
