@@ -38,7 +38,10 @@ export class ApiService {
             const response = await fetch(`${BASE_URL}/${id}`);
             
             if (!response.ok) {
-                throw new Error(`Product with ID ${id} not found`);
+                throw ErrorHandler.apiError(
+                    `Product with ID ${id} not found: ${response.status} ${response.statusText}`, 
+                    response
+                );
             }
 
             const p = await response.json();
@@ -54,7 +57,7 @@ export class ApiService {
             );
 
         } catch (error: any) {
-            console.error(`Error fetching product ID ${id}:`, error.message);
+            ErrorHandler.handle(error);
             throw error;
         }
     }
@@ -64,7 +67,10 @@ export class ApiService {
             const response = await fetch(`${BASE_URL}/search?q=${encodeURIComponent(query)}`);
 
             if (!response.ok) {
-                throw new Error(`Search failed for query: "${query}"`);
+                throw ErrorHandler.apiError(
+                    `Search failed for query: "${query}": ${response.status} ${response.statusText}`, 
+                    response
+                );
             }
 
             const data = await response.json();
@@ -79,7 +85,7 @@ export class ApiService {
                 p.rating
             ));
         } catch (error: any) {
-            console.error(`Error searching products:`, error.message);
+            ErrorHandler.handle(error);
             throw error;
         }
     }
