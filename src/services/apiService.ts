@@ -1,4 +1,5 @@
-import { Product } from '../models/Product';
+import { Product } from '../models/Product.js';
+import { CustomError, ErrorHandler } from '../utils/errorHandler';
 
 const BASE_URL = 'https://dummyjson.com/products';
 
@@ -8,7 +9,10 @@ export class ApiService {
             const response = await fetch(`${BASE_URL}?limit=${limit}&skip=${skip}`);
             
             if (!response.ok) {
-                throw new Error(`Failed to fetch products: ${response.status} ${response.statusText}`);
+                throw ErrorHandler.apiError(
+                    `Failed to fetch products: ${response.status} ${response.statusText}`, 
+                    response
+                );
             }
 
             const data = await response.json();
@@ -24,7 +28,7 @@ export class ApiService {
             ));
 
         } catch (error: any) {
-            console.error('Error fetching products:', error.message);
+            ErrorHandler.handle(error);
             throw error;
         }
     }
