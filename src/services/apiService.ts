@@ -1,5 +1,5 @@
 import { Product } from '../models/Product.js';
-import { CustomError, ErrorHandler } from '../utils/errorHandler';
+import { CustomError, ErrorHandler } from '../utils/errorHandler.js';
 
 const BASE_URL = 'https://dummyjson.com/products';
 
